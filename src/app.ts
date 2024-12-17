@@ -1,17 +1,20 @@
 import fastify from "fastify";
-import { AltairFastify as altairFastify } from "altair-fastify-plugin";
-import { buildSchema } from "drizzle-graphql";
-import database, { getPgVersion } from "./db/drizzle.js";
 import mercurius, { type IResolvers } from "mercurius";
 
+import { AltairFastify as altairFastify } from "altair-fastify-plugin";
+import database, { getPgVersion } from "./config/db/drizzle.js";
+import schema from "./config/gql/schema.js";
+
 const app = fastify();
-const { schema } = buildSchema(database);
 
 const resolvers: IResolvers = {};
 
 app.register(mercurius, {
   schema,
   resolvers,
+  context: (request, reply) => {
+    return { database };
+  },
   graphiql: false,
   ide: false,
   path: "/graphql",
