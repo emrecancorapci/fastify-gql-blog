@@ -19,7 +19,13 @@ export const posts = schema.table("posts", {
   img_url: varchar("img_url", { length: 255 }),
   slug: varchar("slug").notNull(),
   content: text("content").notNull(),
-  category_id: integer("category_id").default(0),
+  author_id: uuid("author_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  category_id: integer("category_id")
+    .default(0)
+    .references(() => categories.id, { onDelete: "set null" }),
+
   created_at: timestamp("created_at").defaultNow(),
   updated_at: timestamp("updated_at")
     .defaultNow()
@@ -35,16 +41,22 @@ export const users = schema.table("users", {
   bio: text("bio"),
   profile_img: varchar({ length: 255 }),
   created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdateFn(() => new Date(Date.now())),
 });
 
 export const comments = schema.table("comments", {
   id: serial("id").primaryKey(),
   author_id: uuid("author_id").references(() => users.id, {
-    onDelete: "cascade",
+    onDelete: "set null",
   }),
   post_id: uuid("post_id").references(() => posts.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
   created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdateFn(() => new Date(Date.now())),
 });
 
 export const categories = schema.table("categories", {
@@ -69,9 +81,11 @@ export const postsToTags = schema.table(
       .notNull()
       .references(() => tags.id),
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.post_id, t.tag_id] }),
-  }),
+  (t) => [
+    {
+      pk: primaryKey({ columns: [t.post_id, t.tag_id] }),
+    },
+  ],
 );
 
 export const postsToTagsRelations = relations(postsToTags, ({ one }) => ({
@@ -95,9 +109,7 @@ export const likes = schema.table(
       .notNull()
       .references(() => users.id),
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.post_id, t.user_id] }),
-  }),
+  (t) => [{ pk: primaryKey({ columns: [t.post_id, t.user_id] }) }],
 );
 
 export const likesRelations = relations(likes, ({ one }) => ({
@@ -111,11 +123,21 @@ export const likesRelations = relations(likes, ({ one }) => ({
   }),
 }));
 
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+  comments: many(comments),
+  likes: many(likes),
+}));
+
 export const tagsRelations = relations(tags, ({ many }) => ({
   posts: many(postsToTags),
 }));
 
 export const postRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [posts.author_id],
+    references: [users.id],
+  }),
   category: one(categories, {
     fields: [posts.category_id],
     references: [categories.id],
