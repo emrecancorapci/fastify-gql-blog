@@ -10,13 +10,15 @@
     "tchk": "tsc --noEmit",
     "db:gen": "drizzle-kit generate",
     "db:mig": "drizzle-kit migrate",
-    "db:std": "drizzle-kit studio"
+    "db:std": "drizzle-kit studio",
+    "db:push": "drizzle-kit push"
   },
   "license": "MIT",
   "dependencies": {
     "@fastify/env": "^5.0.1",
     "@fastify/postgres": "^6.0.1",
     "altair-fastify-plugin": "^8.0.5",
+    "argon2": "^0.41.1",
     "dotenv": "^16.4.7",
     "drizzle-graphql": "^0.8.5",
     "drizzle-orm": "^0.38.2",
@@ -26,12 +28,13 @@
     "mercurius": "^15.1.0",
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
-    "slugify": "^1.6.6"
+    "slug": "^10.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/node": "^22.10.2",
     "@types/pg": "^8.11.10",
+    "@types/slug": "^5.0.9",
     "drizzle-kit": "^0.30.1",
     "fastify-cli": "^7.2.0",
     "tsx": "^4.19.2",
