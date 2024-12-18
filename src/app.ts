@@ -3,15 +3,22 @@ import mercurius, { type IResolvers } from "mercurius";
 
 import { AltairFastify as altairFastify } from "altair-fastify-plugin";
 import database, { getPgVersion } from "./config/db/drizzle.js";
-import schema from "./config/gql/schema.js";
+import schema from "./schema/schema.js";
+import { resolvers } from "./schema/resolvers.js";
 
 const app = fastify();
 
-const resolvers: IResolvers = {};
+declare module "mercurius" {
+  interface MercuriusContext extends ResolverContext {}
+}
+
+interface ResolverContext {
+  database: typeof database;
+}
 
 app.register(mercurius, {
   schema,
-  resolvers,
+  resolvers: resolvers,
   context: (request, reply) => {
     return { database };
   },

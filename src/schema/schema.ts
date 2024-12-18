@@ -1,34 +1,11 @@
+import { postSchema } from "./post/schema.js";
+import { userSchema } from "./user/schema.js";
+import { mutations } from "./mutations.js";
+
 export default `#graphql
 
-type Post {
-  id: ID!,
-  title: String!,
-  img_url: String,
-  slug: String!,
-  content: String!,
-  author: User!,
-  category: Category!,
-  tags: [Tag!]!,
-  likes: [User!],
-  comments: [Comment!],
-  created_at: String!,
-  updated_at: String!,
-  published: Boolean!,
-}
-
-type User {
-  id: ID!,
-  username: String!,
-  email: String!,
-  password_hash: String!,
-  bio: String,
-  posts: [Post!]!,
-  comments: [Comment!],
-  likes: [Post!]!,
-  profile_img: String!,
-  created_at: String!,
-  updated_at: String!,
-}
+${postSchema}
+${userSchema}
 
 type Comment {
   id: ID!,
@@ -63,4 +40,5 @@ type Query {
   tags: [Tag],
   tag(id: ID, slug: String): Tag,
 }
+${mutations}
 `;
