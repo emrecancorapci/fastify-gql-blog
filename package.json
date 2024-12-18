@@ -6,9 +6,11 @@
   "scripts": {
     "start": "pnpm build && node build/app.js",
     "build": "tsc -p tsconfig.json",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "dev": "tsx watch --include \"./src/**/**.ts\" src/app.ts",
+    "tchk": "tsc --noEmit",
+    "db:gen": "drizzle-kit generate",
+    "db:mig": "drizzle-kit migrate",
+    "db:std": "drizzle-kit studio"
   },
   "license": "MIT",
   "dependencies": {

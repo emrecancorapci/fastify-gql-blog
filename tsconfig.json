@@ -3,7 +3,6 @@
     "lib": ["es2023"],
     "module": "nodenext",
     "target": "es2022",
-
     "outDir": "./build",
 
     "strict": true,
@@ -11,6 +10,6 @@
     "skipLibCheck": true,
     "moduleResolution": "nodenext",
   },
-  "include": ["src", "eslint.config.js"],
+  "include": ["src"],
   "exclude": ["node_modules", "build"]
 }

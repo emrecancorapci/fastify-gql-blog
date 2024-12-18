@@ -1,13 +1,13 @@
 import "dotenv/config";
 import { type Config, defineConfig } from 'drizzle-kit';
 
-const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
+const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 
-if (!PGHOST || !PGDATABASE || !PGUSER || !PGPASSWORD || !ENDPOINT_ID)
+if (!PGHOST || !PGDATABASE || !PGUSER || !PGPASSWORD)
   throw new Error('Missing environment variable(s)');
 
 const config: Config = {
-    schema: './src/db/schema.ts',
+    schema: './src/config/db/schema.ts',
     out: './drizzle',
     dialect: 'postgresql',
     dbCredentials: {
