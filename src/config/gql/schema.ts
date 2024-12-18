@@ -27,6 +27,7 @@ type User {
   likes: [Post!]!,
   profile_img: String!,
   created_at: String!,
+  updated_at: String!,
 }
 
 type Comment {
@@ -35,30 +36,31 @@ type Comment {
   post: Post!,
   content: String!,
   created_at: String!,
+  updated_at: String!,
 }
 
 type Category {
   id: ID!,
   name: String!,
   slug: String!,
-  posts: [Post!]!,
+  posts: [Post!],
 }
 
 type Tag {
   id: ID!,
   name: String!,
   slug: String!,
-  posts: [Post!]!,
+  posts: [Post!],
 }
 
 type Query {
   posts: [Post],
-  post(id: ID!): Post,
+  post(id: ID, slug: String): Post,
   users: [User],
-  user(id: ID!): User,
+  user(id: ID, username: String, email: String): User,
   categories: [Category],
-  category(id: ID!): Category,
+  category(id: ID, slug: String): Category,
   tags: [Tag],
-  tag(id: ID!): Tag,
+  tag(id: ID, slug: String): Tag,
 }
 `;
