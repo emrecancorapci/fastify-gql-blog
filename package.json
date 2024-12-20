@@ -7,7 +7,7 @@
     "start": "pnpm build && node build/app.js",
     "build": "tsc -p tsconfig.json",
     "dev": "tsx watch --include \"./src/**/**.ts\" src/app.ts",
-    "tchk": "tsc --noEmit",
+    "tschk": "tsc --noEmit",
     "db:gen": "drizzle-kit generate",
     "db:mig": "drizzle-kit migrate",
     "db:std": "drizzle-kit studio",
@@ -28,7 +28,8 @@
     "mercurius": "^15.1.0",
     "pg": "^8.13.1",
     "postgres": "^3.4.5",
-    "slug": "^10.0.0"
+    "slug": "^10.0.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
