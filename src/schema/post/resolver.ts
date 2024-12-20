@@ -11,6 +11,7 @@ import {
   tags,
   users,
 } from "@/config/db/schema.js";
+import { CreatePostSchema, UpdatePostSchema } from "./schema.js";
 
 export const postQueries: IResolverObject<{ id: string | number }> = {
   Query: {
@@ -63,24 +64,20 @@ export const postResolvers: IResolverObject<{ id: string | number }> = {
         .where(eq(comments.post_id, String(id))),
   },
   Mutation: {
-    createPost: async (
-      _,
-      {
+    createPost: async (_, data, ctx) => {
+      const {
         title,
         img_url,
-        slug,
         content,
         author_id,
         category_id,
         tags,
         published,
-      },
-      ctx,
-    ) => {
-      // HERE
+      } = await CreatePostSchema.parseAsync(data);
+
       const slugifiedTitle = slugify(title, { locale: "tr" });
-    
-      ctx.database
+
+      const response = await ctx.database
         .insert(posts)
         .values({
           title,
@@ -91,7 +88,81 @@ export const postResolvers: IResolverObject<{ id: string | number }> = {
           category_id,
           published: published ?? true,
         })
+        .returning();
+
+      if (tags && tags.length > 0) {
+        ctx.database
+          .insert(postsToTags)
+          .values(
+            tags.map((tag_id: number) => ({ post_id: response[0].id, tag_id })),
+          );
+      }
+
+      return response;
+    },
+    updatePost: async (_, data, ctx) => {
+      const {
+        id,
+        title,
+        img_url,
+        content,
+        author_id,
+        category_id,
+        tags,
+        published,
+      } = await UpdatePostSchema.parseAsync(data);
+
+      let slug: string | undefined;
+
+      if (title) {
+        slug = slugify(title, { locale: "tr" });
+      }
+
+      const response = await ctx.database
+        .update(posts)
+        .set({
+          title,
+          img_url,
+          slug,
+          content,
+          author_id,
+          category_id,
+          published,
+        })
+        .returning();
+
+      if (!tags || tags.length === 0) return response;
+
+      ctx.database
+        .delete(postsToTags)
+        .where(eq(postsToTags.post_id, id))
         .execute();
+
+      const tagsResponse = ctx.database
+        .insert(postsToTags)
+        .values(
+          tags.map((tag_id: number) => ({ post_id: response[0].id, tag_id })),
+        )
+        .returning({ tag_id: postsToTags.tag_id });
+
+      console.log(tagsResponse);
+
+      return response;
+    },
+    deletePost: async (_, { id }, ctx) => {
+      const response = ctx.database
+        .delete(posts)
+        .where(eq(posts.id, id))
+        .returning();
+
+      ctx.database
+        .delete(postsToTags)
+        .where(eq(postsToTags.post_id, id))
+        .execute();
+
+      ctx.database.delete(comments).where(eq(comments.post_id, id)).execute();
+
+      return response;
     },
   },
 };
