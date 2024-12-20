@@ -5,13 +5,11 @@ import { postQueries, postResolvers } from "./post/resolver.js";
 import { userQueries, userResolvers } from "./user/resolver.js";
 import {
   categories,
-  comments,
-  likes,
   posts,
   postsToTags,
   tags,
   users,
-} from "../config/db/schema.js";
+} from "@/config/db/schema.js";
 
 export const resolvers: IResolvers<{ id: string | number }> = {
   Query: {

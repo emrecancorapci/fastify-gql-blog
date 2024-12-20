@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { IResolverObject } from "mercurius";
 
-import { comments, likes, posts, users } from "../../config/db/schema.js";
+import { comments, likes, posts, users } from "@/config/db/schema.js";
 
 export const userQueries: IResolverObject<{ id: string | number }> = {
   Query: {

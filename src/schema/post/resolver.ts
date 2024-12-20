@@ -10,8 +10,7 @@ import {
   postsToTags,
   tags,
   users,
-} from "../../config/db/schema.js";
-import argon2 from "argon2";
+} from "@/config/db/schema.js";
 
 export const postQueries: IResolverObject<{ id: string | number }> = {
   Query: {
