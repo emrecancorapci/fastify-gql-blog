@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { IResolverObject } from "mercurius";
 import slugify from "slug";
 
@@ -15,15 +15,20 @@ import { CreatePostSchema, UpdatePostSchema } from "./schema.js";
 
 export const postQueries: IResolverObject<{ id: string | number }> = {
   Query: {
-    posts: async (_, __, ctx) => {
-      return ctx.database.select().from(posts);
-    },
+    posts: async (_, __, ctx) =>
+      await ctx.database.select().from(posts).where(eq(posts.deleted, false)),
     post: async (_, { id, slug }, ctx) => {
       if (slug) {
-        return ctx.database.select().from(posts).where(eq(posts.slug, slug));
+        return await ctx.database
+          .select()
+          .from(posts)
+          .where(and(eq(posts.slug, slug), eq(posts.deleted, false)));
       }
       if (id) {
-        return ctx.database.select().from(posts).where(eq(posts.id, id));
+        return await ctx.database
+          .select()
+          .from(posts)
+          .where(and(eq(posts.id, id), eq(posts.deleted, false)));
       }
 
       console.error("No input provided for post query");
@@ -61,7 +66,9 @@ export const postResolvers: IResolverObject<{ id: string | number }> = {
       await ctx.database
         .select()
         .from(comments)
-        .where(eq(comments.post_id, String(id))),
+        .where(
+          and(eq(comments.post_id, String(id)), eq(comments.deleted, false)),
+        ),
   },
   Mutation: {
     createPost: async (_, data, ctx) => {
