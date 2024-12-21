@@ -30,12 +30,12 @@ export const posts = schema.table(
     category_id: integer("category_id")
       .default(0)
       .references(() => categories.id, { onDelete: "set null" }),
-
     created_at: timestamp("created_at").defaultNow(),
     updated_at: timestamp("updated_at")
       .defaultNow()
       .$onUpdateFn(() => new Date(Date.now())),
     published: boolean("published").default(true),
+    deleted: boolean("deleted").default(false),
   },
   (table) => [{ slugIdx: uniqueIndex("slug_idx").on(table.slug) }],
 );
@@ -58,6 +58,8 @@ export const users = schema.table(
   "users",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    role: varchar("role", { length: 15 }).default("user"),
+    name: varchar("name", { length: 127 }),
     username: varchar("username", { length: 63 }).unique().notNull(),
     email: varchar("email", { length: 127 }).unique().notNull(),
     password_hash: varchar("password_hash", { length: 255 }).notNull(),
@@ -96,6 +98,7 @@ export const comments = schema.table(
     updated_at: timestamp("updated_at")
       .defaultNow()
       .$onUpdateFn(() => new Date(Date.now())),
+    deleted: boolean("deleted").default(false),
   },
   (t) => [{ postIdx: index("post_idx").on(t.post_id) }],
 );
