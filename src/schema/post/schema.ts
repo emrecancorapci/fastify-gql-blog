@@ -10,6 +10,7 @@ const author_id = z.string().uuid();
 const category_id = z.number().int().positive();
 const tags = z.array(z.number().int().positive());
 const published = z.boolean().default(true);
+const deleted = z.boolean().default(false);
 
 export const CreatePostSchema = z.object({
   title,
@@ -18,7 +19,7 @@ export const CreatePostSchema = z.object({
   author_id,
   category_id,
   tags: tags.optional(),
-  published,
+  published: published.optional(),
 });
 
 export const UpdatePostSchema = z.object({
@@ -30,6 +31,7 @@ export const UpdatePostSchema = z.object({
   category_id: category_id.optional(),
   tags: tags.optional(),
   published: published.optional(),
+  deleted: deleted.optional(),
 });
 
 // GraphQL Schema
@@ -48,4 +50,5 @@ type Post {
   created_at: String!,
   updated_at: String!,
   published: Boolean!,
+  deleted: Boolean!,
 }`;

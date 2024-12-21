@@ -36,29 +36,29 @@ export const postQueries: IResolverObject<{ id: string | number }> = {
 export const postResolvers: IResolverObject<{ id: string | number }> = {
   Post: {
     author: async ({ id }, _, ctx) =>
-      ctx.database
+      await ctx.database
         .select()
         .from(users)
         .where(eq(users.id, String(id))),
     category: async ({ id }, _, ctx) =>
-      ctx.database
+      await ctx.database
         .select()
         .from(categories)
         .where(eq(categories.id, Number(id))),
     tags: async ({ id }, _, ctx) =>
-      ctx.database
+      await ctx.database
         .select()
         .from(tags)
         .innerJoin(postsToTags, eq(postsToTags.tag_id, tags.id))
         .where(eq(postsToTags.post_id, String(id))),
     likes: async ({ id }, _, ctx) =>
-      ctx.database
+      await ctx.database
         .select()
         .from(likes)
         .innerJoin(users, eq(likes.user_id, users.id))
         .where(eq(likes.post_id, String(id))),
     comments: async ({ id }, _, ctx) =>
-      ctx.database
+      await ctx.database
         .select()
         .from(comments)
         .where(eq(comments.post_id, String(id))),

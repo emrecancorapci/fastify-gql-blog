@@ -1,5 +1,5 @@
 import fastify from "fastify";
-import mercurius, { type IResolvers } from "mercurius";
+import mercurius from "mercurius";
 
 import { AltairFastify as altairFastify } from "altair-fastify-plugin";
 import database, { getPgVersion } from "./config/db/drizzle.js";
