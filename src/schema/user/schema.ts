@@ -54,6 +54,11 @@ export const DeleteUserSchema = z.object({
   password,
 });
 
+export const LoginSchema = z.object({
+  username,
+  password,
+});
+
 // GraphQL Schema
 export const userSchema = `#graphql
 type User {

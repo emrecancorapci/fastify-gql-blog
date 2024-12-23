@@ -48,7 +48,8 @@ type Mutation {
   createUser(username: String!, email: String!, password: String!): User,
   updateUser(id: ID!, username: String, email: String, password: String, bio: String, profile_img: String): User,
   deleteUser(id: ID!): User,
-  login(email: String!, password: String!): User,
+
+  login(email: String!, password: String!): String,
 
   createComment(author_id: ID!, post_id: ID!, content: String!): Comment,
   updateComment(id: ID!, author_id: ID, post_id: ID, content: String): Comment,

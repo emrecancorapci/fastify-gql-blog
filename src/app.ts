@@ -1,33 +1,30 @@
 import fastify from "fastify";
 import mercurius from "mercurius";
+import { AltairFastify } from "altair-fastify-plugin";
+import fastifyEnv from "@fastify/env";
 
-import { AltairFastify as altairFastify } from "altair-fastify-plugin";
 import database, { getPgVersion } from "./config/db/drizzle.js";
 import schema from "./schema/schema.js";
 import { resolvers } from "./schema/resolvers.js";
+import { auth } from "./modules/auth/auth.js";
 
 const app = fastify();
 
-declare module "mercurius" {
-  interface MercuriusContext extends ResolverContext {}
-}
-
-interface ResolverContext {
-  database: typeof database;
-}
+await app.register(fastifyEnv, { dotenv: true });
+await app.register(auth);
 
 app.register(mercurius, {
   schema,
   resolvers: resolvers,
   context: (request, reply) => {
-    return { database };
+    return { database, user: request.user, jwtSign: app.jwt.sign };
   },
   graphiql: false,
   ide: false,
   path: "/graphql",
 });
 
-app.register(altairFastify, {
+app.register(AltairFastify, {
   path: "/docs/gql",
   baseURL: "/docs/gql/",
   endpointURL: "/graphql",

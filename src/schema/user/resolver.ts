@@ -5,6 +5,7 @@ import { comments, likes, posts, users } from "@/config/db/schema.js";
 import {
   CreateUserSchema,
   DeleteUserSchema,
+  LoginSchema,
   UpdateUserSchema,
 } from "./schema.js";
 import argon2 from "argon2";
@@ -128,13 +129,49 @@ export const userResolvers: IResolverObject<{ id: string | number }> = {
 
       return user;
     },
+    login: async (_, data, ctx) => {
+      const { username, password } = await LoginSchema.parseAsync(data);
+
+      const user = await ctx.database
+        .select({
+          id: users.id,
+          name: users.name,
+          role: users.role,
+          password_hash: users.password_hash,
+        })
+        .from(users)
+        .where(eq(users.id, username));
+
+      if (!user || user.length === 0) {
+        throw new Error("User does not exist");
+      }
+
+      if (user.length > 1) {
+        throw new Error("Multiple users with the same ID");
+      }
+
+      const [{ password_hash, ...payload }] = user;
+
+      const is_password_validated = await argon2.verify(
+        password_hash,
+        password,
+      );
+
+      if (!is_password_validated) {
+        throw new Error("Invalid password");
+      }
+
+      const token = ctx.jwtSign(payload);
+
+      return token;
+    },
   },
 };
 
 async function validateUserPassword(
   ctx: MercuriusContext,
   id: string,
-  current_password: string,
+  password: string,
 ) {
   const user = await ctx.database
     .select({ password_hash: users.password_hash })
@@ -151,7 +188,7 @@ async function validateUserPassword(
 
   const is_password_validated = await argon2.verify(
     user[0].password_hash,
-    current_password,
+    password,
   );
 
   if (!is_password_validated) {
