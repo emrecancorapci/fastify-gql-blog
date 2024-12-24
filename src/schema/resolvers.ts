@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import type { IResolvers } from "mercurius";
 
 import { postQueries, postResolvers } from "@/modules/post/post.resolvers.js";
-import { userQueries, userResolvers } from "./user/resolver.js";
+import { userQueries, userResolvers } from "@/modules/user/user.resolvers.js";
 import {
   categories,
   posts,
@@ -10,8 +10,10 @@ import {
   tags,
   users,
 } from "@/config/db/schema.js";
+import { DateScalar } from "./date.js";
 
 export const resolvers: IResolvers<{ id: string | number }> = {
+  DateTime: DateScalar,
   Query: {
     ...postQueries.Query,
     ...userQueries.Query,

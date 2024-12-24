@@ -35,8 +35,8 @@ export const posts = schema.table(
       .defaultNow()
       .$onUpdateFn(() => new Date(Date.now()))
       .notNull(),
-    published: boolean("published").default(true),
-    deleted: boolean("deleted").default(false),
+    published: boolean("published").default(true).notNull(),
+    deleted: boolean("deleted").default(false).notNull(),
   },
   (table) => [{ slugIdx: uniqueIndex("slug_idx").on(table.slug) }],
 );
@@ -108,7 +108,7 @@ export const comments = schema.table(
       .defaultNow()
       .$onUpdateFn(() => new Date(Date.now()))
       .notNull(),
-    deleted: boolean("deleted").default(false),
+    deleted: boolean("deleted").default(false).notNull(),
     deleted_at: timestamp("deleted_at"),
     deleted_by: uuid("deleted_by").references(() => users.id, {
       onDelete: "set null",

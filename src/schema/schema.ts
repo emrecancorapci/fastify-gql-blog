@@ -1,7 +1,8 @@
 import { postSchema } from "../modules/post/post.graphql.js";
-import { userSchema } from "./user/schema.js";
+import { userSchema } from "../modules/user/user.graphql.js";
 
 export default `#graphql
+scalar DateTime
 
 ${postSchema}
 ${userSchema}
@@ -12,10 +13,10 @@ type Comment {
   author: User!,
   post: Post!,
   likes: [User!],
-  created_at: String!,
-  updated_at: String!,
+  created_at: DateTime!,
+  updated_at: DateTime!,
   is_deleted: Boolean!,
-  deleted_at: String,
+  deleted_at: DateTime,
   deleted_by: User,
 }
 
@@ -25,8 +26,8 @@ type Category {
   slug: String!,
   posts: [Post!],
   editors: [User!],
-  created_at: String!,
-  updated_at: String!,
+  created_at: DateTime!,
+  updated_at: DateTime!,
 }
 
 type Tag {

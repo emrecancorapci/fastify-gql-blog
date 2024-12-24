@@ -15,6 +15,13 @@
       "when": 1735039970171,
       "tag": "0001_pretty_owl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1735080522164,
+      "tag": "0002_exotic_invisible_woman",
+      "breakpoints": true
     }
   ]
 }
