@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { IResolvers } from "mercurius";
 
-import { postQueries, postResolvers } from "./post/resolver.js";
+import { postQueries, postResolvers } from "@/modules/post/post.resolvers.js";
 import { userQueries, userResolvers } from "./user/resolver.js";
 import {
   categories,

@@ -17,7 +17,7 @@ import {
   getPostById,
   getPostBySlug,
   updatePost,
-} from "@/modules/post/methods.js";
+} from "@/modules/post/post.methods.js";
 
 export const postQueries: IResolverObject = {
   Query: {

@@ -1,10 +1,10 @@
-import { and, eq, or, SelectedFields, type SQL } from "drizzle-orm";
+import { and, eq, or, type SQL } from "drizzle-orm";
 import slugify from "slug";
 import type { MercuriusContext } from "mercurius";
 
-import { comments, posts, postsToTags } from "@/config/db/schema.js";
-import { CreatePostSchema, UpdatePostSchema } from "@/schema/post/schema.js";
-import type { PgSelectBuilder, SelectedFieldsFlat } from "drizzle-orm/pg-core";
+import { posts, postsToTags } from "@/config/db/schema.js";
+import { CreatePostSchema, UpdatePostSchema } from "./post.validations.js";
+import type { SelectedFieldsFlat } from "drizzle-orm/pg-core";
 
 export async function getAllPosts({ user, database }: MercuriusContext) {
   if (user && user.role === "admin") {

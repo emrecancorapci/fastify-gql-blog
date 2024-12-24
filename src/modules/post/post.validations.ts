@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Zod Schema
 const id = z.string().uuid();
 const title = z.string().min(4).max(255);
 const img_url = z.string().url();
@@ -33,22 +32,3 @@ export const UpdatePostSchema = z.object({
   published: published.optional(),
   deleted: deleted.optional(),
 });
-
-// GraphQL Schema
-export const postSchema = `#graphql
-type Post {
-  id: ID!,
-  title: String!,
-  img_url: String,
-  slug: String!,
-  content: String!,
-  author: User!,
-  category: Category!,
-  tags: [Tag!],
-  post_likes: [User!],
-  comments: [Comment!],
-  created_at: String!,
-  updated_at: String!,
-  published: Boolean!,
-  deleted: Boolean!,
-}`;

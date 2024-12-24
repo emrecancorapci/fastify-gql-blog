@@ -1,4 +1,4 @@
-import { postSchema } from "./post/schema.js";
+import { postSchema } from "../modules/post/post.graphql.js";
 import { userSchema } from "./user/schema.js";
 
 export default `#graphql
