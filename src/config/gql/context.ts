@@ -1,5 +1,6 @@
-import type database from "../db/drizzle.js";
 import type { JWT } from "@fastify/jwt";
+
+import type database from "../db/drizzle.js";
 
 declare module "mercurius" {
   interface MercuriusContext extends ResolverContext {}
@@ -7,11 +8,11 @@ declare module "mercurius" {
 
 interface ResolverContext {
   database: typeof database;
-  user?: TokenPayload;
+  user?: AuthTokenPayload;
   jwtSign: JWT["sign"];
 }
 
-interface TokenPayload {
+interface AuthTokenPayload {
   id: string;
   name: string;
   username: string;

@@ -6,7 +6,7 @@ import fastifyEnv from "@fastify/env";
 import database, { getPgVersion } from "./config/db/drizzle.js";
 import schema from "./schema/schema.js";
 import { resolvers } from "./schema/resolvers.js";
-import { auth } from "./modules/auth/auth.js";
+import { auth } from "./middlewares/auth.js";
 
 const app = fastify();
 
