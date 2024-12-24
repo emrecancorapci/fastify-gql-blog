@@ -8,11 +8,15 @@ ${userSchema}
 
 type Comment {
   id: ID!,
+  content: String!,
   author: User!,
   post: Post!,
-  content: String!,
+  likes: [User!],
   created_at: String!,
   updated_at: String!,
+  is_deleted: Boolean!,
+  deleted_at: String,
+  deleted_by: User,
 }
 
 type Category {
@@ -20,6 +24,9 @@ type Category {
   name: String!,
   slug: String!,
   posts: [Post!],
+  editors: [User!],
+  created_at: String!,
+  updated_at: String!,
 }
 
 type Tag {
@@ -50,6 +57,7 @@ type Mutation {
   deleteUser(id: ID!): User,
 
   login(email: String!, password: String!): String,
+  register(username: String!, email: String!, password: String!): String,
 
   createComment(author_id: ID!, post_id: ID!, content: String!): Comment,
   updateComment(id: ID!, author_id: ID, post_id: ID, content: String): Comment,

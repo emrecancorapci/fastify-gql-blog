@@ -68,9 +68,11 @@ type User {
   email: String!,
   bio: String,
   profile_img: String!,
-  posts: [Post!]!,
+  posts: [Post!],
   comments: [Comment!],
-  likes: [Post!]!,
+  post_likes: [Post!],
+  comment_likes: [Comment!],
+  editor_on: [Category!],
   created_at: String!,
   updated_at: String!,
 }`;
