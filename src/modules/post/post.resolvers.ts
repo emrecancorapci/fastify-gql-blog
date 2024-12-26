@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import type { IResolverObject } from "mercurius";
+import type { IResolverObject, IResolvers } from "mercurius";
 
 import {
   categories,
@@ -10,12 +10,9 @@ import {
   users,
 } from "@/config/db/schema.js";
 import {
-  createPost,
-  deletePost,
   getAllPosts,
   getPostById,
   getPostBySlug,
-  updatePost,
 } from "@/modules/post/post.methods.js";
 import { getUserById } from "../user/user.methods.js";
 
@@ -67,10 +64,5 @@ export const postResolvers: IResolvers = {
             eq(comments.deleted, false),
           ),
         ),
-  },
-  Mutation: {
-    createPost: async (_, data, ctx) => await createPost(ctx, data),
-    updatePost: async (_, data, ctx) => await updatePost(ctx, data),
-    deletePost: async (_, { id }, ctx) => await deletePost(ctx, id),
   },
 };

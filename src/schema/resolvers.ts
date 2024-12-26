@@ -12,6 +12,11 @@ import {
 } from "@/config/db/schema.js";
 import { DateScalar } from "./date.js";
 import {
+  createPost,
+  deletePost,
+  updatePost,
+} from "@/modules/post/post.methods.js";
+import {
   createUser,
   deleteUser,
   login,
@@ -46,16 +51,16 @@ export const resolvers: IResolvers = {
       if (slug) {
         return (
           await ctx.database
-          .select()
-          .from(categories)
+            .select()
+            .from(categories)
             .where(eq(categories.slug, slug))
         )[0];
       }
       if (id) {
         return (
           await ctx.database
-          .select()
-          .from(categories)
+            .select()
+            .from(categories)
             .where(eq(categories.id, id))
         )[0];
       }
@@ -65,7 +70,7 @@ export const resolvers: IResolvers = {
       return undefined;
     },
   },
-  ...postResolvers,
+  Post: postResolvers.Post,
   User: userResolvers.User,
   Comment: {
     author: async ({ id }, _, ctx) =>
@@ -95,6 +100,9 @@ export const resolvers: IResolvers = {
         .where(eq(postTags.tag_id, Number(id))),
   },
   Mutation: {
+    createPost: async (_, data, ctx) => await createPost(ctx, data),
+    updatePost: async (_, data, ctx) => await updatePost(ctx, data),
+    deletePost: async (_, { id }, ctx) => await deletePost(ctx, id),
     createUser: async (_, data, ctx) => await createUser(ctx, data),
     updateUser: async (_, data, ctx) => await updateUser(ctx, data),
     deleteUser: async (_, data, ctx) => await deleteUser(ctx, data),

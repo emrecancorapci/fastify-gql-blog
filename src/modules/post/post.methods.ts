@@ -95,15 +95,28 @@ export async function getPostBySlug(
   }
 }
 
+interface CreatePostData {
+  title: string;
+  img_url?: string;
+  content: string;
+  tags?: string[];
+  author_id?: string;
+  category_id: string;
+  published?: boolean;
+}
 export async function createPost(
   { user, database }: MercuriusContext,
-  data: unknown,
+  data: CreatePostData,
 ) {
   if (!user) {
     throw new Error("You must be logged in to create a post");
   }
 
-  const verifiedPost = await CreatePostSchema.parseAsync(data);
+  const verifiedPost = await CreatePostSchema.parseAsync({
+    ...data,
+    category_id: Number(data.category_id),
+    tags: data.tags?.map(Number),
+  });
   const slug = slugify(verifiedPost.title, { locale: "tr" });
 
   const { tags, ...post } = Object.assign(verifiedPost, {
