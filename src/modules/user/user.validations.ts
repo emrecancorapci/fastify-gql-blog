@@ -36,14 +36,15 @@ export const CreateUserSchema = z.object({
   username,
   email,
   password,
+  name: name.optional(),
+  bio: bio.optional(),
+  profile_img: profile_img.optional(),
 });
 
 export const UpdateUserSchema = z.object({
   id,
-  current_password: password,
   name: name.optional(),
   username: username.optional(),
-  email: email.optional(),
   password: password.optional(),
   bio: bio.optional(),
   profile_img: profile_img.optional(),
@@ -58,21 +59,3 @@ export const LoginSchema = z.object({
   username,
   password,
 });
-
-// GraphQL Schema
-export const userSchema = `#graphql
-type User {
-  id: ID!,
-  name: String!,
-  username: String!,
-  email: String!,
-  bio: String,
-  profile_img: String!,
-  posts: [Post!],
-  comments: [Comment!],
-  post_likes: [Post!],
-  comment_likes: [Comment!],
-  editor_on: [Category!],
-  created_at: String!,
-  updated_at: String!,
-}`;
