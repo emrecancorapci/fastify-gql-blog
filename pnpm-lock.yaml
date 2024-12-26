@@ -28,10 +28,10 @@ importers:
         version: 16.4.7
       drizzle-graphql:
         specifier: ^0.8.5
-        version: 0.8.5(drizzle-orm@0.38.2(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5))(graphql@16.10.0)
+        version: 0.8.5(drizzle-orm@0.38.3(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5))(graphql@16.10.0)
       drizzle-orm:
-        specifier: ^0.38.2
-        version: 0.38.2(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5)
+        specifier: ^0.38.3
+        version: 0.38.3(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5)
       fastify:
         specifier: ^5.2.0
         version: 5.2.0
@@ -779,8 +779,8 @@ packages:
     resolution: {integrity: sha512-HmA/NeewvHywhJ2ENXD3KvOuM/+K2dGLJfxVfIHsGwaqKICJnS+Ke2L6UcSrSrtMJLJaT0Im1Qv4TFXfaZShyw==}
     hasBin: true
 
-  drizzle-orm@0.38.2:
-    resolution: {integrity: sha512-eCE3yPRAskLo1WpM9OHpFaM70tBEDsWhwR/0M3CKyztAXKR9Qs3asZlcJOEliIcUSg8GuwrlY0dmYDgmm6y5GQ==}
+  drizzle-orm@0.38.3:
+    resolution: {integrity: sha512-w41Y+PquMpSff/QDRGdItG0/aWca+/J3Sda9PPGkTxBtjWQvgU1jxlFBXdjog5tYvTu58uvi3PwR1NuCx0KeZg==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -2037,9 +2037,9 @@ snapshots:
 
   dotenv@16.4.7: {}
 
-  drizzle-graphql@0.8.5(drizzle-orm@0.38.2(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5))(graphql@16.10.0):
+  drizzle-graphql@0.8.5(drizzle-orm@0.38.3(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5))(graphql@16.10.0):
     dependencies:
-      drizzle-orm: 0.38.2(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5)
+      drizzle-orm: 0.38.3(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5)
       graphql: 16.10.0
       graphql-parse-resolve-info: 4.13.0(graphql@16.10.0)
     transitivePeerDependencies:
@@ -2054,7 +2054,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.38.2(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5):
+  drizzle-orm@0.38.3(@types/pg@8.11.10)(pg@8.13.1)(postgres@3.4.5):
     optionalDependencies:
       '@types/pg': 8.11.10
       pg: 8.13.1
