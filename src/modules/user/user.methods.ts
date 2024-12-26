@@ -190,17 +190,18 @@ export async function login(
   { database, jwtSign }: MercuriusContext,
   data: unknown,
 ) {
-  const { username, password } = await LoginSchema.parseAsync(data);
+  const { email, password } = await LoginSchema.parseAsync(data);
 
   const [user] = await database
     .select({
       id: users.id,
       name: users.name,
+      username: users.username,
       role: users.role,
       password_hash: users.password_hash,
     })
     .from(users)
-    .where(eq(users.id, username));
+    .where(eq(users.email, email));
 
   if (!user) {
     throw new Error("User does not exist");

@@ -56,6 +56,6 @@ export const DeleteUserSchema = z.object({
 });
 
 export const LoginSchema = z.object({
-  username,
+  email,
   password,
 });

@@ -1,9 +1,9 @@
 export const userSchema = `#graphql
 type User {
   id: ID!,
-  name: String!,
   username: String!,
   email: String!,
+  name: String,
   bio: String,
   profile_img: String!,
   posts: [Post!],
