@@ -19,7 +19,7 @@ import {
   updateUser,
 } from "@/modules/user/user.methods.js";
 
-export const resolvers: IResolvers<{ id: string | number }> = {
+export const resolvers: IResolvers = {
   DateTime: DateScalar,
   Query: {
     ...postQueries.Query,
@@ -40,20 +40,24 @@ export const resolvers: IResolvers<{ id: string | number }> = {
       return undefined;
     },
     categories: async (_, __, ctx) => {
-      return ctx.database.select().from(categories);
+      return await ctx.database.select().from(categories);
     },
     category: async (_, { id, slug }, ctx) => {
       if (slug) {
-        return ctx.database
+        return (
+          await ctx.database
           .select()
           .from(categories)
-          .where(eq(categories.slug, slug));
+            .where(eq(categories.slug, slug))
+        )[0];
       }
       if (id) {
-        return ctx.database
+        return (
+          await ctx.database
           .select()
           .from(categories)
-          .where(eq(categories.id, id));
+            .where(eq(categories.id, id))
+        )[0];
       }
 
       console.error("No input provided for category query");
@@ -96,5 +100,15 @@ export const resolvers: IResolvers<{ id: string | number }> = {
     deleteUser: async (_, data, ctx) => await deleteUser(ctx, data),
     login: async (_, data, ctx) => await login(ctx, data),
     register: async (_, data, ctx) => await register(ctx, data),
+    createCategory: async (_, { name, slug }, ctx) => {
+      return (
+        await ctx.database.insert(categories).values({ name, slug }).returning()
+      )[0];
+    },
+    createTag: async (_, { name, slug }, ctx) => {
+      return (
+        await ctx.database.insert(tags).values({ name, slug }).returning()
+      )[0];
+    },
   },
 };
