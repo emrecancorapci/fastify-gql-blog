@@ -37,32 +37,35 @@ export const postQueries: IResolverObject = {
   },
 };
 
-export const postResolvers: IResolverObject = {
+export const postResolvers: IResolvers = {
   Post: {
-    author: async ({ id }, _, ctx) => await getUserById(ctx, id),
-    category: async ({ id }, _, ctx) =>
+    author: async ({ author_id }, _, ctx) => await getUserById(ctx, author_id),
+    category: async ({ category_id }, _, ctx) =>
       await ctx.database
         .select()
         .from(categories)
-        .where(eq(categories.id, Number(id))),
-    tags: async ({ id }, _, ctx) =>
+        .where(eq(categories.id, Number(category_id))),
+    tags: async ({ id: post_id }, _, ctx) =>
       await ctx.database
         .select()
         .from(tags)
         .innerJoin(postTags, eq(postTags.tag_id, tags.id))
-        .where(eq(postTags.post_id, String(id))),
-    postLikes: async ({ id }, _, ctx) =>
+        .where(eq(postTags.post_id, String(post_id))),
+    post_likes: async ({ id: post_id }, _, ctx) =>
       await ctx.database
         .select()
         .from(postLikes)
         .innerJoin(users, eq(postLikes.user_id, users.id))
-        .where(eq(postLikes.post_id, String(id))),
-    comments: async ({ id }, _, ctx) =>
+        .where(eq(postLikes.post_id, String(post_id))),
+    comments: async ({ id: post_id }, _, ctx) =>
       await ctx.database
         .select()
         .from(comments)
         .where(
-          and(eq(comments.post_id, String(id)), eq(comments.deleted, false)),
+          and(
+            eq(comments.post_id, String(post_id)),
+            eq(comments.deleted, false),
+          ),
         ),
   },
   Mutation: {

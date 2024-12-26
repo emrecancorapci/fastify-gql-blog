@@ -16,7 +16,7 @@ export const CreatePostSchema = z.object({
   title,
   img_url: img_url.optional(),
   content,
-  author_id,
+  author_id: author_id.optional(),
   category_id,
   tags: tags.optional(),
   published: published.optional(),
