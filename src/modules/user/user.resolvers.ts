@@ -1,7 +1,14 @@
 import { and, eq } from "drizzle-orm";
 import type { IResolverObject } from "mercurius";
 
-import { comments, postLikes, posts, users } from "@/config/db/schema.js";
+import {
+  categories,
+  commentLikes,
+  comments,
+  categoryEditors,
+  postLikes,
+  posts,
+} from "@/config/db/schema.js";
 import { getAllPosts } from "@/modules/post/post.methods.js";
 import {
   createUser,
@@ -52,12 +59,24 @@ export const userResolvers: IResolverObject = {
         .where(
           and(eq(comments.author_id, String(id)), eq(comments.deleted, false)),
         ),
-    postLikes: async ({ id }, _, ctx) =>
+    post_likes: async ({ id }, _, ctx) =>
       await ctx.database
         .select()
         .from(postLikes)
         .innerJoin(posts, eq(postLikes.post_id, posts.id))
         .where(eq(postLikes.user_id, String(id))),
+    comment_likes: async ({ id }, _, ctx) =>
+      await ctx.database
+        .select()
+        .from(commentLikes)
+        .innerJoin(comments, eq(commentLikes.comment_id, comments.id))
+        .where(eq(commentLikes.user_id, String(id))),
+    editor_on: async ({ id }, _, ctx) =>
+      await ctx.database
+        .select()
+        .from(categoryEditors)
+        .innerJoin(categories, eq(categoryEditors.category_id, categories.id))
+        .where(eq(categoryEditors.editor_id, String(id))),
   },
   Mutations: {
     createUser: async (_, data, ctx) => await createUser(ctx, data),

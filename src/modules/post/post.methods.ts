@@ -2,7 +2,7 @@ import { and, eq, or, type SQL, type DBQueryConfig } from "drizzle-orm";
 import slugify from "slug";
 import type { MercuriusContext } from "mercurius";
 
-import { posts, postsToTags } from "@/config/db/schema.js";
+import { posts, postTags } from "@/config/db/schema.js";
 import {
   CreatePostSchema,
   defaultPostColumns,
@@ -115,7 +115,7 @@ export async function createPost(
 
   if (tags && tags.length > 0) {
     await database
-      .insert(postsToTags)
+      .insert(postTags)
       .values(tags.map((tag_id: number) => ({ post_id: response.id, tag_id })));
   }
 
@@ -199,12 +199,12 @@ export async function updatePost(
   if (!tags || tags.length === 0) return response;
 
   // Update tags
-  await database.delete(postsToTags).where(eq(postsToTags.post_id, id));
+  await database.delete(postTags).where(eq(postTags.post_id, id));
 
   await database
-    .insert(postsToTags)
+    .insert(postTags)
     .values(tags.map((tag_id: number) => ({ post_id: response.id, tag_id })))
-    .returning({ tag_id: postsToTags.tag_id });
+    .returning({ tag_id: postTags.tag_id });
 
   return response;
 }
@@ -231,7 +231,7 @@ export async function deletePost(
     .where(eq(posts.id, id))
     .returning();
 
-  await database.delete(postsToTags).where(eq(postsToTags.post_id, id));
+  await database.delete(postTags).where(eq(postTags.post_id, id));
 
   return response;
 }

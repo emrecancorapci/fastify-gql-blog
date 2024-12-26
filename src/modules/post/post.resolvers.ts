@@ -5,8 +5,7 @@ import {
   categories,
   comments,
   postLikes,
-  posts,
-  postsToTags,
+  postTags,
   tags,
   users,
 } from "@/config/db/schema.js";
@@ -18,6 +17,7 @@ import {
   getPostBySlug,
   updatePost,
 } from "@/modules/post/post.methods.js";
+import { getUserById } from "../user/user.methods.js";
 
 export const postQueries: IResolverObject = {
   Query: {
@@ -39,11 +39,7 @@ export const postQueries: IResolverObject = {
 
 export const postResolvers: IResolverObject = {
   Post: {
-    author: async ({ id }, _, ctx) =>
-      await ctx.database
-        .select()
-        .from(users)
-        .where(eq(users.id, String(id))),
+    author: async ({ id }, _, ctx) => await getUserById(ctx, id),
     category: async ({ id }, _, ctx) =>
       await ctx.database
         .select()
@@ -53,8 +49,8 @@ export const postResolvers: IResolverObject = {
       await ctx.database
         .select()
         .from(tags)
-        .innerJoin(postsToTags, eq(postsToTags.tag_id, tags.id))
-        .where(eq(postsToTags.post_id, String(id))),
+        .innerJoin(postTags, eq(postTags.tag_id, tags.id))
+        .where(eq(postTags.post_id, String(id))),
     postLikes: async ({ id }, _, ctx) =>
       await ctx.database
         .select()

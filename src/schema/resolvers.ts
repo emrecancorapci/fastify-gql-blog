@@ -6,7 +6,7 @@ import { userQueries, userResolvers } from "@/modules/user/user.resolvers.js";
 import {
   categories,
   posts,
-  postsToTags,
+  postTags,
   tags,
   users,
 } from "@/config/db/schema.js";
@@ -80,7 +80,7 @@ export const resolvers: IResolvers<{ id: string | number }> = {
       ctx.database
         .select()
         .from(posts)
-        .innerJoin(postsToTags, eq(postsToTags.post_id, posts.id))
-        .where(eq(postsToTags.tag_id, Number(id))),
+        .innerJoin(postTags, eq(postTags.post_id, posts.id))
+        .where(eq(postTags.tag_id, Number(id))),
   },
 };

@@ -50,7 +50,7 @@ export const postRelations = relations(posts, ({ one, many }) => ({
     fields: [posts.category_id],
     references: [categories.id],
   }),
-  tags: many(postsToTags),
+  tags: many(postTags),
   postLikes: many(postLikes),
   comments: many(comments),
 }));
@@ -86,8 +86,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
   postLikes: many(postLikes),
-  commentLikes: many(usersToCommentLikes),
-  editorCategories: many(editorsToCategories),
+  commentLikes: many(commentLikes),
+  editorCategories: many(categoryEditors),
   deletedComments: many(comments),
 }));
 
@@ -130,7 +130,7 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     fields: [comments.deleted_by],
     references: [users.id],
   }),
-  likes: many(usersToCommentLikes),
+  likes: many(commentLikes),
 }));
 
 // Categories
@@ -147,7 +147,7 @@ export const categories = schema.table("categories", {
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
   posts: many(posts),
-  editors: many(editorsToCategories),
+  editors: many(categoryEditors),
 }));
 
 // Tags
@@ -158,11 +158,14 @@ export const tags = schema.table("tags", {
 });
 
 export const tagsRelations = relations(tags, ({ many }) => ({
-  posts: many(postsToTags),
+  posts: many(postTags),
 }));
 
-// Many to Many Relationships
-// Post Likes (Users to Posts)
+/// Many to Many Tables ///
+
+/**
+ * Posts to Users
+ */
 export const postLikes = schema.table(
   "post_likes",
   {
@@ -187,8 +190,10 @@ export const likesRelations = relations(postLikes, ({ one }) => ({
   }),
 }));
 
-// Comment Likes (Users to Comments)
-export const usersToCommentLikes = schema.table(
+/**
+ * Users to Comments
+ */
+export const commentLikes = schema.table(
   "comment_likes",
   {
     comment_id: integer("comment_id")
@@ -201,22 +206,21 @@ export const usersToCommentLikes = schema.table(
   (t) => [{ pk: primaryKey({ columns: [t.comment_id, t.user_id] }) }],
 );
 
-export const commentLikesRelations = relations(
-  usersToCommentLikes,
-  ({ one }) => ({
-    comment: one(comments, {
-      fields: [usersToCommentLikes.comment_id],
-      references: [comments.id],
-    }),
-    users: one(users, {
-      fields: [usersToCommentLikes.user_id],
-      references: [users.id],
-    }),
+export const commentLikesRelations = relations(commentLikes, ({ one }) => ({
+  comment: one(comments, {
+    fields: [commentLikes.comment_id],
+    references: [comments.id],
   }),
-);
+  users: one(users, {
+    fields: [commentLikes.user_id],
+    references: [users.id],
+  }),
+}));
 
-// Posts to Tags
-export const postsToTags = schema.table(
+/**
+ * Posts to Tags
+ */
+export const postTags = schema.table(
   "posts_to_tags",
   {
     post_id: uuid("post_id")
@@ -233,19 +237,21 @@ export const postsToTags = schema.table(
   ],
 );
 
-export const postsToTagsRelations = relations(postsToTags, ({ one }) => ({
+export const postTagsRelations = relations(postTags, ({ one }) => ({
   post: one(posts, {
-    fields: [postsToTags.post_id],
+    fields: [postTags.post_id],
     references: [posts.id],
   }),
   tags: one(tags, {
-    fields: [postsToTags.tag_id],
+    fields: [postTags.tag_id],
     references: [tags.id],
   }),
 }));
 
-// Editors to Categories
-export const editorsToCategories = schema.table(
+/**
+ * Editors to Categories
+ */
+export const categoryEditors = schema.table(
   "editors_to_categories",
   {
     editor_id: uuid("editor_id")
@@ -262,15 +268,15 @@ export const editorsToCategories = schema.table(
   ],
 );
 
-export const editorsToCategoriesRelations = relations(
-  editorsToCategories,
+export const categoryEditorsRelations = relations(
+  categoryEditors,
   ({ one }) => ({
     user: one(users, {
-      fields: [editorsToCategories.editor_id],
+      fields: [categoryEditors.editor_id],
       references: [users.id],
     }),
     category: one(categories, {
-      fields: [editorsToCategories.category_id],
+      fields: [categoryEditors.category_id],
       references: [categories.id],
     }),
   }),
