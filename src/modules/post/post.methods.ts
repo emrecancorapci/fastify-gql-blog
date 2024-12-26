@@ -1,91 +1,98 @@
-import { and, eq, or, type SQL } from "drizzle-orm";
+import { and, eq, or, type SQL, type DBQueryConfig } from "drizzle-orm";
 import slugify from "slug";
 import type { MercuriusContext } from "mercurius";
 
 import { posts, postsToTags } from "@/config/db/schema.js";
-import { CreatePostSchema, UpdatePostSchema } from "./post.validations.js";
-import type { SelectedFieldsFlat } from "drizzle-orm/pg-core";
+import {
+  CreatePostSchema,
+  defaultPostColumns,
+  UpdatePostSchema,
+} from "./post.validations.js";
 
-export async function getAllPosts({ user, database }: MercuriusContext) {
-  if (user && user.role === "admin") {
-    return await database.select().from(posts);
-  }
-
-  return await database.select().from(posts).where(postIsVisible);
-}
-
-export async function getAllPostsBySQL(
+export async function getAllPosts(
   { user, database }: MercuriusContext,
-  { select, where }: { select?: SelectedFieldsFlat; where?: SQL },
+  options: DBQueryConfig<"many", true> = {
+    columns: defaultPostColumns,
+    orderBy: posts.created_at,
+    limit: 10,
+    offset: 0,
+  },
 ) {
-  if (user && user.role === "admin") {
-    if (user.role === "admin") {
-      return await database.select().from(posts).where(where);
-    }
-
-    if (select) {
-      return await database
-        .select(select)
-        .from(posts)
-        .where(and(postIsVisibleByAuthor(user.id), where));
-    }
+  if (!user) {
+    return await database.query.posts.findMany({
+      ...options,
+      where: options.where
+        ? and(
+            // @ts-expect-error I couldn't find a way to type this
+            options.where,
+            postIsVisible,
+          )
+        : postIsVisible,
+    });
   }
 
-  if (select) {
-    return await database
-      .select(select)
-      .from(posts)
-      .where(and(postIsVisible, where));
+  switch (user.role ?? "guest") {
+    case "admin":
+      return await database.query.posts.findMany({
+        ...options,
+        columns: { ...defaultPostColumns, published: true, deleted: true },
+      });
+    case "user":
+      return await database.query.posts.findMany({
+        ...options,
+        columns: { ...defaultPostColumns, published: true, deleted: true },
+        where: options.where
+          ? // @ts-expect-error I couldn't find a way to type this
+            and(options.where, postIsVisibleByAuthor(user.id))
+          : or(eq(posts.author_id, user.id), postIsVisible),
+      });
   }
-
-  return await database.select().from(posts).where(postIsVisible);
 }
 
 export async function getPostById(
   { user, database }: MercuriusContext,
   id: string,
 ) {
-  if (user) {
-    if (user.role === "admin") {
-      return await database.select().from(posts).where(eq(posts.id, id));
-    }
-
+  if (!user)
     return await database
       .select()
       .from(posts)
-      .where(and(eq(posts.id, id), postIsVisibleByAuthor(user.id)));
-  }
+      .where(and(eq(posts.id, id), postIsVisible));
 
-  return await database
-    .select()
-    .from(posts)
-    .where(and(eq(posts.id, id), postIsVisible));
+  switch (user.role) {
+    case "admin":
+      return await database.select().from(posts).where(eq(posts.slug, id));
+
+    case "user": {
+      return await database
+        .select()
+        .from(posts)
+        .where(and(eq(posts.id, id), postIsVisibleByAuthor(user.id)));
+    }
+  }
 }
 
 export async function getPostBySlug(
   { user, database }: MercuriusContext,
   slug: string,
 ) {
-  if (user) {
-    if (user.role === "admin") {
-      return await database.select().from(posts).where(eq(posts.slug, slug));
-    }
-
+  if (!user)
     return await database
       .select()
       .from(posts)
-      .where(
-        and(
-          eq(posts.slug, slug),
-          or(postIsVisible, eq(posts.author_id, user.id)),
-        ),
-      );
-  }
+      .where(and(eq(posts.slug, slug), postIsVisible));
 
-  return await database
-    .select()
-    .from(posts)
-    .where(and(eq(posts.slug, slug), postIsVisible));
+  switch (user.role) {
+    case "admin":
+      return await database.select().from(posts).where(eq(posts.slug, slug));
+
+    case "user": {
+      return await database
+        .select()
+        .from(posts)
+        .where(and(eq(posts.slug, slug), postIsVisibleByAuthor(user.id)));
+    }
+  }
 }
 
 export async function createPost(
@@ -144,30 +151,31 @@ export async function updatePost(
     throw new Error("You are not authorized to update this post");
   }
 
-  let slug: string | undefined;
-  let response: Post;
+  const slug = (() => {
+    if (!title) return;
+    return slugify(title, { locale: "tr" });
+  })();
 
-  if (title) {
-    slug = slugify(title, { locale: "tr" });
-  }
+  const response = await (async () => {
+    if (user.role === "admin") {
+      const [response] = await database
+        .update(posts)
+        .set({
+          title,
+          img_url,
+          slug,
+          content,
+          author_id,
+          category_id,
+          published,
+          deleted,
+        })
+        .where(eq(posts.id, id))
+        .returning();
 
-  if (user.role === "admin") {
-    [response] = await database
-      .update(posts)
-      .set({
-        title,
-        img_url,
-        slug,
-        content,
-        author_id,
-        category_id,
-        published,
-        deleted,
-      })
-      .where(eq(posts.id, id))
-      .returning();
-  } else {
-    [response] = await database
+      return response;
+    }
+    const [response] = await database
       .update(posts)
       .set({
         title,
@@ -180,7 +188,8 @@ export async function updatePost(
       })
       .where(and(eq(posts.id, id), eq(posts.author_id, user.id)))
       .returning();
-  }
+    return response;
+  })();
 
   Object.assign(response, {
     created_at: response.created_at.toISOString(),

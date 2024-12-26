@@ -1,3 +1,4 @@
+import { posts } from "@/config/db/schema.js";
 import { z } from "zod";
 
 const id = z.string().uuid();
@@ -32,3 +33,29 @@ export const UpdatePostSchema = z.object({
   published: published.optional(),
   deleted: deleted.optional(),
 });
+
+export const defaultPostSelect = {
+  id: posts.id,
+  title: posts.title,
+  img_url: posts.img_url,
+  slug: posts.slug,
+  content: posts.content,
+  author_id: posts.author_id,
+  category_id: posts.category_id,
+  created_at: posts.created_at,
+  updated_at: posts.updated_at,
+  published: posts.published,
+  deleted: posts.deleted,
+};
+
+export const defaultPostColumns = {
+  id: true,
+  title: true,
+  img_url: true,
+  slug: true,
+  content: true,
+  author_id: true,
+  category_id: true,
+  created_at: true,
+  updated_at: true,
+};
