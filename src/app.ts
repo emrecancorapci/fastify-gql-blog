@@ -4,13 +4,16 @@ import { AltairFastify } from "altair-fastify-plugin";
 import fastifyEnv from "@fastify/env";
 
 import database, { getPgVersion } from "./config/db/drizzle.js";
+import { envSchema } from "./config/env.js";
 import schema from "./schema/schema.js";
 import { resolvers } from "./schema/resolvers.js";
 import { auth } from "./middlewares/auth.js";
 
 const app = fastify();
 
-await app.register(fastifyEnv, { dotenv: true });
+app.register(fastifyEnv, { dotenv: true, schema: envSchema });
+
+await app;
 await app.register(auth);
 
 app.register(mercurius, {
