@@ -63,7 +63,7 @@ export const users = schema.table(
   "users",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    role: userRoleEnum("role").default("user"),
+    role: userRoleEnum("role").default("user").notNull(),
     name: varchar("name", { length: 127 }),
     username: varchar("username", { length: 63 }).unique().notNull(),
     email: varchar("email", { length: 127 }).unique().notNull(),
@@ -137,7 +137,7 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
 export const categories = schema.table("categories", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 127 }).notNull(),
-  slug: varchar("slug", { length: 127 }).notNull(),
+  slug: varchar("slug", { length: 127 }).unique().notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at")
     .defaultNow()

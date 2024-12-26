@@ -49,8 +49,8 @@ type Query {
 }
 
 type Mutation {
-  createPost(title: String!, img_url: String, content: String!, author_id: ID!, category_id: ID!, tags: [ID!]!, published: Boolean): Post,
-  updatePost(id: ID!, title: String, img_url: String, content: String, author_id: ID, category_id: ID, tags: [ID], published: Boolean): Post,
+  createPost(title: String!, img_url: String, content: String!, author_id: ID!, category_id: ID!, tags: [ID!], published: Boolean): Post,
+  updatePost(id: ID!, title: String, img_url: String, content: String, author_id: ID, category_id: ID, tags: [ID!], published: Boolean): Post,
   deletePost(id: ID!): Post,
 
   createUser(username: String!, email: String!, password: String!): User,
@@ -63,6 +63,10 @@ type Mutation {
   createComment(author_id: ID!, post_id: ID!, content: String!): Comment,
   updateComment(id: ID!, author_id: ID, post_id: ID, content: String): Comment,
   deleteComment(id: ID!): Comment,
+
+  createTag(name: String!, slug: String!): Tag,
+  updateTag(id: ID!, name: String, slug: String): Tag,
+  deleteTag(id: ID!): Tag,
 
   createCategory(name: String!, slug: String!): Category,
   updateCategory(id: ID!, name: String, slug: String): Category,
