@@ -11,6 +11,13 @@ import {
   users,
 } from "@/config/db/schema.js";
 import { DateScalar } from "./date.js";
+import {
+  createUser,
+  deleteUser,
+  login,
+  register,
+  updateUser,
+} from "@/modules/user/user.methods.js";
 
 export const resolvers: IResolvers<{ id: string | number }> = {
   DateTime: DateScalar,
@@ -55,7 +62,7 @@ export const resolvers: IResolvers<{ id: string | number }> = {
     },
   },
   ...postResolvers,
-  ...userResolvers,
+  User: userResolvers.User,
   Comment: {
     author: async ({ id }, _, ctx) =>
       ctx.database
@@ -82,5 +89,12 @@ export const resolvers: IResolvers<{ id: string | number }> = {
         .from(posts)
         .innerJoin(postTags, eq(postTags.post_id, posts.id))
         .where(eq(postTags.tag_id, Number(id))),
+  },
+  Mutation: {
+    createUser: async (_, data, ctx) => await createUser(ctx, data),
+    updateUser: async (_, data, ctx) => await updateUser(ctx, data),
+    deleteUser: async (_, data, ctx) => await deleteUser(ctx, data),
+    login: async (_, data, ctx) => await login(ctx, data),
+    register: async (_, data, ctx) => await register(ctx, data),
   },
 };

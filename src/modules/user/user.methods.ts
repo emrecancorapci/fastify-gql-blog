@@ -45,8 +45,10 @@ export async function getAllUsers(
   if (user)
     return await database.query.users.findMany({
       ...options,
-      // @ts-expect-error I couldn't find a way to type this
-      where: options.where ? and(options.where, eq(users.id, user.id)) : eq(users.id, user.id),
+      where: options.where
+        ? // @ts-expect-error I couldn't find a way to type this
+          and(options.where, eq(users.id, user.id))
+        : eq(users.id, user.id),
     });
 
   throw new Error("Unauthorized access to users data");
@@ -63,7 +65,7 @@ export async function getUserById(
     )[0];
   }
 
-  return await database.select().from(users).where(eq(users.id, id));
+  return (await database.select().from(users).where(eq(users.id, id)))[0];
 }
 
 export async function getUserByUsername(
@@ -216,7 +218,11 @@ export async function login(
   return jwtSign(payload);
 }
 
-export async function register({ database }: MercuriusContext, data: unknown) {
+export async function register(
+  { database, jwtSign }: MercuriusContext,
+  data: unknown,
+) {
+  console.log("Register", data);
   const { username, email, password } = await CreateUserSchema.parseAsync(data);
 
   const [{ count: userCount }] = await database
@@ -233,11 +239,16 @@ export async function register({ database }: MercuriusContext, data: unknown) {
   const [createdUser] = await database
     .insert(users)
     .values({ username, email, password_hash })
-    .returning(defaultSelect);
+    .returning({ ...defaultSelect, role: users.role });
 
   if (!createdUser) {
     throw new Error("Failed to create user");
   }
 
-  return createdUser;
+  return jwtSign({
+    id: createdUser.id,
+    name: createUser.name,
+    username: createdUser.username,
+    role: createdUser.role,
+  });
 }

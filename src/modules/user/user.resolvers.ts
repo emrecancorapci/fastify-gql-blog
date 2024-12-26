@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import type { IResolverObject } from "mercurius";
+import type { IResolverObject, IResolvers } from "mercurius";
 
 import {
   categories,
@@ -11,20 +11,12 @@ import {
 } from "@/config/db/schema.js";
 import { getAllPosts } from "@/modules/post/post.methods.js";
 import {
-  createUser,
-  deleteUser,
   getAllUsers,
   getUserByEmail,
   getUserById,
   getUserByUsername,
-  login,
-  register,
-  updateUser,
 } from "./user.methods.js";
-import {
-  defaultPostColumns,
-  defaultPostSelect,
-} from "../post/post.validations.js";
+import { defaultPostColumns } from "../post/post.validations.js";
 
 export const userQueries: IResolverObject = {
   Query: {
@@ -45,7 +37,7 @@ export const userQueries: IResolverObject = {
   },
 };
 
-export const userResolvers: IResolverObject = {
+export const userResolvers: IResolvers = {
   User: {
     posts: async ({ id }, _, ctx) =>
       await getAllPosts(ctx, {
@@ -77,12 +69,5 @@ export const userResolvers: IResolverObject = {
         .from(categoryEditors)
         .innerJoin(categories, eq(categoryEditors.category_id, categories.id))
         .where(eq(categoryEditors.editor_id, String(id))),
-  },
-  Mutations: {
-    createUser: async (_, data, ctx) => await createUser(ctx, data),
-    updateUser: async (_, data, ctx) => await updateUser(ctx, data),
-    deleteUser: async (_, data, ctx) => await deleteUser(ctx, data),
-    login: async (_, data, ctx) => await login(ctx, data),
-    register: async (_, data, ctx) => await register(ctx, data),
   },
 };
