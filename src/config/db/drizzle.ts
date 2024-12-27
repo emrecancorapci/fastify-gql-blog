@@ -4,7 +4,6 @@ import postgres from "postgres";
 
 import * as schema from "./schema.js";
 
-
 const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD } = process.env;
 
 const queryClient = postgres({
@@ -13,7 +12,7 @@ const queryClient = postgres({
   username: PGUSER,
   password: PGPASSWORD,
   port: 5432,
-  ssl: 'require',
+  ssl: "require",
 });
 
 const database = drizzle(queryClient, { schema });

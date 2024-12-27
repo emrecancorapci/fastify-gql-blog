@@ -114,9 +114,7 @@ export const resolvers: IResolvers = {
       )[0];
     },
     createTag: async (_, { name, slug }, ctx) => {
-      return (
-        await ctx.database.insert(tags).values({ name, slug }).returning()
-      )[0];
+      return (await ctx.database.insert(tags).values({ name, slug }).returning())[0];
     },
   },
 };

@@ -1,13 +1,6 @@
 export const envSchema = {
   type: "object",
-  required: [
-    "DATABASE_URL",
-    "PGHOST",
-    "PGUSER",
-    "PGPASSWORD",
-    "PGDATABASE",
-    "JWT_SECRET",
-  ],
+  required: ["DATABASE_URL", "PGHOST", "PGUSER", "PGPASSWORD", "PGDATABASE", "JWT_SECRET"],
   properties: {
     PGHOST: {
       type: "string",

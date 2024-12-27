@@ -6,6 +6,7 @@ import type { PgColumn, SelectedFieldsFlat } from "drizzle-orm/pg-core";
 import { users } from "@/config/db/schema.js";
 import {
   CreateUserSchema,
+  defaultUserColumns,
   LoginSchema,
   UpdateUserSchema,
 } from "./user.validations.js";
@@ -20,19 +21,10 @@ const defaultSelect = {
   created_at: users.created_at,
 };
 
-const defaultColumns = {
-  id: true,
-  name: true,
-  username: true,
-  bio: true,
-  profile_img: true,
-  created_at: true,
-};
-
 export async function getAllUsers(
   { database, user }: MercuriusContext,
   options: DBQueryConfig<"many", true> = {
-    columns: defaultColumns,
+    columns: defaultUserColumns,
     orderBy: users.created_at,
     limit: 10,
     offset: 0,
@@ -60,9 +52,7 @@ export async function getUserById(
   options: { select?: SelectedFieldsFlat } = { select: defaultSelect },
 ) {
   if (options.select) {
-    return (
-      await database.select(options.select).from(users).where(eq(users.id, id))
-    )[0];
+    return (await database.select(options.select).from(users).where(eq(users.id, id)))[0];
   }
 
   return (await database.select().from(users).where(eq(users.id, id)))[0];
@@ -75,17 +65,11 @@ export async function getUserByUsername(
 ) {
   if (options.select) {
     return (
-      await database
-        .select(options.select)
-        .from(users)
-        .where(eq(users.username, username))
+      await database.select(options.select).from(users).where(eq(users.username, username))
     )[0];
   }
 
-  return await database
-    .select()
-    .from(users)
-    .where(eq(users.username, username));
+  return await database.select().from(users).where(eq(users.username, username));
 }
 
 export async function getUserByEmail(
@@ -94,25 +78,18 @@ export async function getUserByEmail(
   options: { select?: SelectedFieldsFlat } = { select: defaultSelect },
 ) {
   if (options.select) {
-    return await database
-      .select(options.select)
-      .from(users)
-      .where(eq(users.email, email));
+    return await database.select(options.select).from(users).where(eq(users.email, email));
   }
 
   return await database.select().from(users).where(eq(users.email, email));
 }
 
-export async function createUser(
-  { database, user }: MercuriusContext,
-  data: unknown,
-) {
+export async function createUser({ database, user }: MercuriusContext, data: unknown) {
   if (!user || user.role !== "admin") {
     throw new Error("Unauthorized access to create user");
   }
 
-  const { username, email, password, ...userData } =
-    await CreateUserSchema.parseAsync(data);
+  const { username, email, password, ...userData } = await CreateUserSchema.parseAsync(data);
 
   const [{ count: userCount }] = await database
     .select({ count: count() })
@@ -137,10 +114,7 @@ export async function createUser(
   return createdUser;
 }
 
-export async function updateUser(
-  { database, user }: MercuriusContext,
-  data: unknown,
-) {
+export async function updateUser({ database, user }: MercuriusContext, data: unknown) {
   const { id, ...user_data } = await UpdateUserSchema.parseAsync(data);
 
   if (!user) {
@@ -163,10 +137,7 @@ export async function updateUser(
   return updated_user;
 }
 
-export async function deleteUser(
-  { database, user }: MercuriusContext,
-  id: string,
-) {
+export async function deleteUser({ database, user }: MercuriusContext, id: string) {
   if (!user) {
     throw new Error("Unauthorized access to delete user. Not logged in.");
   }
@@ -188,10 +159,7 @@ export async function deleteUser(
   return userData;
 }
 
-export async function login(
-  { database, jwtSign }: MercuriusContext,
-  data: unknown,
-) {
+export async function login({ database, jwtSign }: MercuriusContext, data: unknown) {
   const { email, password } = await LoginSchema.parseAsync(data);
 
   const [user] = await database
@@ -218,10 +186,7 @@ export async function login(
   return jwtSign(payload);
 }
 
-export async function register(
-  { database, jwtSign }: MercuriusContext,
-  data: unknown,
-) {
+export async function register({ database, jwtSign }: MercuriusContext, data: unknown) {
   console.log("Register", data);
   const { username, email, password } = await CreateUserSchema.parseAsync(data);
 

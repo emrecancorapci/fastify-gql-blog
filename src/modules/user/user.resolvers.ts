@@ -10,12 +10,7 @@ import {
   posts,
 } from "@/config/db/schema.js";
 import { getAllPosts } from "@/modules/post/post.methods.js";
-import {
-  getAllUsers,
-  getUserByEmail,
-  getUserById,
-  getUserByUsername,
-} from "./user.methods.js";
+import { getAllUsers, getUserByEmail, getUserById, getUserByUsername } from "./user.methods.js";
 import { defaultPostColumns } from "../post/post.validations.js";
 
 export const userQueries: IResolverObject = {
@@ -48,9 +43,7 @@ export const userResolvers: IResolvers = {
       await ctx.database
         .select()
         .from(comments)
-        .where(
-          and(eq(comments.author_id, String(id)), eq(comments.deleted, false)),
-        ),
+        .where(and(eq(comments.author_id, String(id)), eq(comments.deleted, false))),
     post_likes: async ({ id }, _, ctx) =>
       await ctx.database
         .select()

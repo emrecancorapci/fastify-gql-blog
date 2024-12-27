@@ -27,9 +27,7 @@ const password = z
   .refine((p) => /[!@#$%^&*]/.test(p), {
     message: "Password must contain a special character",
   });
-const bio = z
-  .string()
-  .max(255, { message: "Bio must be less than 255 characters long" });
+const bio = z.string().max(255, { message: "Bio must be less than 255 characters long" });
 const profile_img = z.string().url();
 
 export const CreateUserSchema = z.object({
@@ -59,3 +57,12 @@ export const LoginSchema = z.object({
   email,
   password,
 });
+
+export const defaultUserColumns = {
+  id: true,
+  name: true,
+  username: true,
+  bio: true,
+  profile_img: true,
+  created_at: true,
+};

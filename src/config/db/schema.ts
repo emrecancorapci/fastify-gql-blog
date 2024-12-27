@@ -268,16 +268,13 @@ export const categoryEditors = schema.table(
   ],
 );
 
-export const categoryEditorsRelations = relations(
-  categoryEditors,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [categoryEditors.editor_id],
-      references: [users.id],
-    }),
-    category: one(categories, {
-      fields: [categoryEditors.category_id],
-      references: [categories.id],
-    }),
+export const categoryEditorsRelations = relations(categoryEditors, ({ one }) => ({
+  user: one(users, {
+    fields: [categoryEditors.editor_id],
+    references: [users.id],
   }),
-);
+  category: one(categories, {
+    fields: [categoryEditors.category_id],
+    references: [categories.id],
+  }),
+}));

@@ -1,19 +1,8 @@
 import { and, eq } from "drizzle-orm";
 import type { IResolverObject, IResolvers } from "mercurius";
 
-import {
-  categories,
-  comments,
-  postLikes,
-  postTags,
-  tags,
-  users,
-} from "@/config/db/schema.js";
-import {
-  getAllPosts,
-  getPostById,
-  getPostBySlug,
-} from "@/modules/post/post.methods.js";
+import { categories, comments, postLikes, postTags, tags, users } from "@/config/db/schema.js";
+import { getAllPosts, getPostById, getPostBySlug } from "@/modules/post/post.methods.js";
 import { getUserById } from "../user/user.methods.js";
 
 export const postQueries: IResolverObject = {
@@ -58,11 +47,6 @@ export const postResolvers: IResolvers = {
       await ctx.database
         .select()
         .from(comments)
-        .where(
-          and(
-            eq(comments.post_id, String(post_id)),
-            eq(comments.deleted, false),
-          ),
-        ),
+        .where(and(eq(comments.post_id, String(post_id)), eq(comments.deleted, false))),
   },
 };

@@ -3,11 +3,7 @@ import slugify from "slug";
 import type { MercuriusContext } from "mercurius";
 
 import { posts, postTags } from "@/config/db/schema.js";
-import {
-  CreatePostSchema,
-  defaultPostColumns,
-  UpdatePostSchema,
-} from "./post.validations.js";
+import { CreatePostSchema, defaultPostColumns, UpdatePostSchema } from "./post.validations.js";
 
 export async function getAllPosts(
   { user, database }: MercuriusContext,
@@ -49,10 +45,7 @@ export async function getAllPosts(
   }
 }
 
-export async function getPostById(
-  { user, database }: MercuriusContext,
-  id: string,
-) {
+export async function getPostById({ user, database }: MercuriusContext, id: string) {
   if (!user)
     return await database
       .select()
@@ -72,10 +65,7 @@ export async function getPostById(
   }
 }
 
-export async function getPostBySlug(
-  { user, database }: MercuriusContext,
-  slug: string,
-) {
+export async function getPostBySlug({ user, database }: MercuriusContext, slug: string) {
   if (!user)
     return await database
       .select()
@@ -104,10 +94,7 @@ interface CreatePostData {
   category_id: string;
   published?: boolean;
 }
-export async function createPost(
-  { user, database }: MercuriusContext,
-  data: CreatePostData,
-) {
+export async function createPost({ user, database }: MercuriusContext, data: CreatePostData) {
   if (!user) {
     throw new Error("You must be logged in to create a post");
   }
@@ -140,25 +127,13 @@ export async function createPost(
   return response;
 }
 
-export async function updatePost(
-  { user, database }: MercuriusContext,
-  data: unknown,
-) {
+export async function updatePost({ user, database }: MercuriusContext, data: unknown) {
   if (!user) {
     throw new Error("You must be logged in to update a post");
   }
 
-  const {
-    id,
-    title,
-    img_url,
-    content,
-    category_id,
-    author_id,
-    tags,
-    published,
-    deleted,
-  } = await UpdatePostSchema.parseAsync(data);
+  const { id, title, img_url, content, category_id, author_id, tags, published, deleted } =
+    await UpdatePostSchema.parseAsync(data);
 
   if (author_id !== user.id && user.role !== "admin") {
     throw new Error("You are not authorized to update this post");
@@ -222,10 +197,7 @@ export async function updatePost(
   return response;
 }
 
-export async function deletePost(
-  { user, database }: MercuriusContext,
-  id: string,
-) {
+export async function deletePost({ user, database }: MercuriusContext, { id }: { id: string }) {
   if (!user) {
     throw new Error("You must be logged in to delete a post");
   }
@@ -239,18 +211,14 @@ export async function deletePost(
     throw new Error("You are not authorized to delete this post");
   }
 
-  const response = await database
-    .delete(posts)
-    .where(eq(posts.id, id))
-    .returning();
+  const response = await database.delete(posts).where(eq(posts.id, id)).returning();
 
   await database.delete(postTags).where(eq(postTags.post_id, id));
 
   return response;
 }
 
-const postIsVisibleByAuthor = (id: string) =>
-  or(eq(posts.author_id, id), postIsVisible);
+const postIsVisibleByAuthor = (id: string) => or(eq(posts.author_id, id), postIsVisible);
 
 const postIsVisible = and(eq(posts.published, true), eq(posts.deleted, false));
 
