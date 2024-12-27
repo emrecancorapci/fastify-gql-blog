@@ -8,11 +8,14 @@ import { DateScalar } from "./date.js";
 import {
   createPost,
   deletePost,
+  getAllPosts,
+  getPostById,
   updatePost,
 } from "@/modules/post/post.methods.js";
 import {
   createUser,
   deleteUser,
+  getUserById,
   login,
   register,
   updateUser,
@@ -49,16 +52,8 @@ export const resolvers: IResolvers = {
   Post: postResolvers.Post,
   User: userResolvers.User,
   Comment: {
-    author: async ({ id }, _, ctx) =>
-      ctx.database
-        .select()
-        .from(users)
-        .where(eq(users.id, String(id))),
-    post: async ({ id }, _, ctx) =>
-      ctx.database
-        .select()
-        .from(posts)
-        .where(eq(posts.id, String(id))),
+    author: async ({ author_id }, _, ctx) => await getUserById(ctx, author_id),
+    post: async ({ post_id }, _, ctx) => await getPostById(ctx, post_id),
   },
   Category: {
     posts: async ({ id: category_id }, _, ctx) =>
@@ -73,17 +68,17 @@ export const resolvers: IResolvers = {
         .where(eq(categoryEditors.category_id, Number(category_id))),
   },
   Tag: {
-    posts: async ({ id }, _, ctx) =>
-      ctx.database
+    posts: async ({ id: tag_id }, _, ctx) =>
+      await ctx.database
         .select()
         .from(posts)
         .innerJoin(postTags, eq(postTags.post_id, posts.id))
-        .where(eq(postTags.tag_id, Number(id))),
+        .where(eq(postTags.tag_id, Number(tag_id))),
   },
   Mutation: {
     createPost: async (_, data, ctx) => await createPost(ctx, data),
     updatePost: async (_, data, ctx) => await updatePost(ctx, data),
-    deletePost: async (_, { id }, ctx) => await deletePost(ctx, id),
+    deletePost: async (_, data, ctx) => await deletePost(ctx, data),
     createUser: async (_, data, ctx) => await createUser(ctx, data),
     updateUser: async (_, data, ctx) => await updateUser(ctx, data),
     deleteUser: async (_, data, ctx) => await deleteUser(ctx, data),
