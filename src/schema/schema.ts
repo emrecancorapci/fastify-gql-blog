@@ -21,7 +21,7 @@ type Comment {
 }
 
 type Category {
-  id: Number!,
+  id: Int!,
   name: String!,
   slug: String!,
   posts: [Post!],
@@ -31,7 +31,7 @@ type Category {
 }
 
 type Tag {
-  id: Number!,
+  id: Int!,
   name: String!,
   slug: String!,
   posts: [Post!],
@@ -43,9 +43,9 @@ type Query {
   users: [User],
   user(id: ID, username: String, email: String): User,
   categories: [Category],
-  category(id: Number, slug: String): Category,
+  category(id: Int, slug: String): Category,
   tags: [Tag],
-  tag(id: Number, slug: String): Tag,
+  tag(id: Int, slug: String): Tag,
 }
 
 type Mutation {
@@ -65,11 +65,11 @@ type Mutation {
   deleteComment(id: ID!): Comment,
 
   createTag(name: String!, slug: String!): Tag,
-  updateTag(id: Number!, name: String, slug: String): Tag,
-  deleteTag(id: Number!): Tag,
+  updateTag(id: Int!, name: String, slug: String): Tag,
+  deleteTag(id: Int!): Tag,
 
   createCategory(name: String!, slug: String!): Category,
-  updateCategory(id: Number!, name: String, slug: String): Category,
-  deleteCategory(id: Number!): Category,
+  updateCategory(id: Int!, name: String, slug: String): Category,
+  deleteCategory(id: Int!): Category,
 }
 `;
