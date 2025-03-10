@@ -42,4 +42,5 @@ app.listen({ port: 8080 }, async (err, address) => {
   }
 
   console.log(`Server listening at ${address}`);
+  console.log(`GraphQL docs at ${address}/docs/gql`);
 });
